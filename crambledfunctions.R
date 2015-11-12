@@ -77,7 +77,7 @@ CrambledPlot<-function(depthvec,afvec,title,xlimmin=0,xlimmax=100){
   ## app                      ##
   ##############################
   png(width=600,height=400,file=paste(title,"-shiny.png",sep="",collapse=""))
-      smoothScatter(TUD,TAF,transformation = function(x){x},main=title,xlab="Depth",ylab="B allele frequency",ylim=c(0,0.5),xlim=c(xlimmin,xlimmax))
+      smoothScatter(depthvec,afvec,transformation = function(x){x},main=title,xlab="Depth",ylab="B allele frequency",ylim=c(0,0.5),xlim=c(xlimmin,xlimmax))
       dev.off()
 }
 
