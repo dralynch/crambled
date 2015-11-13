@@ -67,7 +67,7 @@ CrambledScanCellline<-function(celllinebam,title,window=51,...){
     ## we down-sample to avoid the homozygous loci dominating
     mypoints<-sample(length(rmdepth1),length(rmdepth2))
     
-    CrambledPlot(c(rmdepth1[mypoints],rmdepth2),c(rmaf1[mypoints],rmaf2),title,redline=redline,...)
+    CrambledPlot(c(rmdepth1[mypoints],rmdepth2),c(rmaf1[mypoints],rmaf2),title,redline=F,...)
   }
 }
 
