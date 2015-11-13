@@ -58,14 +58,12 @@ CrambledScanCellline<-function(celllinebam,title,window=51,...){
     rmdepth2<-runmed(mydepthlist[which(myaflist>=0.1)],21)
     rmaf1<-runmed(myaflist[which(myaflist<0.1)],21)
     rmaf2<-runmed(myaflist[which(myaflist>=0.1)],21)
-    
-    
+      
     ## In the cell line, LOH events are not distinguishable from 
     ## the far more numerous germline homozygous loci
     ## we down-sample to avoid the homozygous loci dominating
     mypoints<-sample(length(rmdepth1),length(rmdepth2))
     
-
     CrambledPlot(c(rmdepth1[mypoints],rmdepth2),c(rmaf1[mypoints],rmaf2),title,redline=F,...)
   }
 }
