@@ -22,7 +22,7 @@ CrambledScan<-function(normalbam,tumourbam,title,window=51,redline=F,...){
     res<-unlist(res)
     mydepthlist<-res[seq(1,length(res),2)]
     myaflist<-res[seq(2,length(res),2)]
-    myaflist[mydepthlist==0]<-0.5
+    myaflist[mydepthlist==0]<-0.5    
     nalist<-is.na(mydepthlist)|is.na(myaflist)
     mydepthlist<-mydepthlist[!nalist]
     myaflist<-myaflist[!nalist]
@@ -31,7 +31,7 @@ CrambledScan<-function(normalbam,tumourbam,title,window=51,redline=F,...){
     rmdepth<-runmed(mydepthlist,window)
     rmaf<-runmed(myaflist,window)
     
-    CrambledPlot(rmdepth,rmaf,title,redline=redline...)
+    CrambledPlot(rmdepth,rmaf,title,redline=redline,...)
   }
 }
 
@@ -65,6 +65,7 @@ CrambledScanCellline<-function(celllinebam,title,window=51,...){
     ## we down-sample to avoid the homozygous loci dominating
     mypoints<-sample(length(rmdepth1),length(rmdepth2))
     
+
     CrambledPlot(c(rmdepth1[mypoints],rmdepth2),c(rmaf1[mypoints],rmaf2),title,redline=F,...)
   }
 }
@@ -84,7 +85,7 @@ CrambledPlot<-function(depthvec,afvec,title,xlimmin=0,xlimmax=100,redline=F){
       xbounds[i]<-min(c(depthvec[afclass==i],xlimmax))
     }
     lines(smooth(xbounds),seq(0,0.5,0.01),lwd=2,col="red")
-  }
+  }      
   dev.off()
 }
 
@@ -144,8 +145,7 @@ CrambledGetSNPs137<-function(){
   test<-require(FDb.UCSC.snp137common.hg19)
   if(!test){message("This function requires FDb.UCSC.snp137common.hg19")}
   if(test){
-    
-    
+        
     snp137common <- features(FDb.UCSC.snp137common.hg19)
     usesnps<-which(as.numeric(snp137common@elementMetadata[,1])>0.4)
     
