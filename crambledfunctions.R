@@ -4,7 +4,7 @@ library(FDb.UCSC.snp137common.hg19)
 
 # tested with Rsamtools_1.20.5, FDb.UCSC.snp137common.hg19_1.0.0
 
-CrambledScan<-function(normalbam,tumourbam,title,window=51,...){
+CrambledScan<-function(normalbam,tumourbam,title,window=51,redline=F,...){
   
   test<-require(Rsamtools)
   if(!test){message("This function requires Rsamtools")}
@@ -22,14 +22,16 @@ CrambledScan<-function(normalbam,tumourbam,title,window=51,...){
     res<-unlist(res)
     mydepthlist<-res[seq(1,length(res),2)]
     myaflist<-res[seq(2,length(res),2)]
-    mydepthlist<-mydepthlist[!is.na(mydepthlist)]
-    myaflist<-myaflist[!is.na(myaflist)]
+    myaflist[mydepthlist==0]<-0.5    
+    nalist<-is.na(mydepthlist)|is.na(myaflist)
+    mydepthlist<-mydepthlist[!nalist]
+    myaflist<-myaflist[!nalist]
     
     ## now apply a running median
     rmdepth<-runmed(mydepthlist,window)
     rmaf<-runmed(myaflist,window)
     
-    CrambledPlot(rmdepth,rmaf,title,...)
+    CrambledPlot(rmdepth,rmaf,title,redline=redline,...)
   }
 }
 
@@ -65,20 +67,28 @@ CrambledScanCellline<-function(celllinebam,title,window=51,...){
     ## we down-sample to avoid the homozygous loci dominating
     mypoints<-sample(length(rmdepth1),length(rmdepth2))
     
-    CrambledPlot(c(rmdepth1[mypoints],rmdepth2),c(rmaf1[mypoints],rmaf2),title,...)
+    CrambledPlot(c(rmdepth1[mypoints],rmdepth2),c(rmaf1[mypoints],rmaf2),title,redline=redline,...)
   }
 }
 
 
-CrambledPlot<-function(depthvec,afvec,title,xlimmin=0,xlimmax=100){
+CrambledPlot<-function(depthvec,afvec,title,xlimmin=0,xlimmax=100,redline=F){
   ##############################
   ## Produces a plot that can ##
   ## be loaded into the Shiny ##
   ## app                      ##
   ##############################
   png(width=600,height=400,file=paste(title,"-shiny.png",sep="",collapse=""))
-      smoothScatter(depthvec,afvec,transformation = function(x){x},main=title,xlab="Depth",ylab="B allele frequency",ylim=c(0,0.5),xlim=c(xlimmin,xlimmax))
-      dev.off()
+  smoothScatter(depthvec,afvec,transformation = function(x){x},main=title,xlab="Depth",ylab="B allele frequency",ylim=c(0,0.5),xlim=c(xlimmin,xlimmax))
+  if(redline){
+    afclass<-as.numeric(cut(afvec,seq(-0.005,0.505,0.01)))
+    xbounds<-rep(NA,51)
+    for(i in 1:51){
+      xbounds[i]<-min(c(depthvec[afclass==i],xlimmax))
+    }
+    lines(smooth(xbounds),seq(0,0.5,0.01),lwd=2,col="red")
+  }      
+  dev.off()
 }
 
 CrambledScanInfo <- function(x)
@@ -139,8 +149,7 @@ CrambledGetSNPs137<-function(){
   test<-require(FDb.UCSC.snp137common.hg19)
   if(!test){message("This function requires FDb.UCSC.snp137common.hg19")}
   if(test){
-    
-    
+        
     snp137common <- features(FDb.UCSC.snp137common.hg19)
     usesnps<-which(as.numeric(snp137common@elementMetadata[,1])>0.4)
     
