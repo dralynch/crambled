@@ -145,7 +145,7 @@ CrambledGetSNPs137<-function(){
   if(test){
         
     snp137common <- features(FDb.UCSC.snp137common.hg19)
-    usesnps<-which(as.numeric(snp137common@elementMetadata[,1])>0.4)
+    usesnps<-which(as.numeric(snp137common@elementMetadata[,1])==0)
     
     mysnps<-snp137common[usesnps,]
     myseqs<-as.character(snp137common@seqnames[usesnps])
