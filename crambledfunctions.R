@@ -35,8 +35,6 @@ CrambledScan<-function(normalbam,tumourbam,title,window=51,redline=F,...){
   }
 }
 
-
-
 CrambledScanCellline<-function(celllinebam,title,window=51,...){
   
   test<-require(Rsamtools)
@@ -60,8 +58,7 @@ CrambledScanCellline<-function(celllinebam,title,window=51,...){
     rmdepth2<-runmed(mydepthlist[which(myaflist>=0.1)],21)
     rmaf1<-runmed(myaflist[which(myaflist<0.1)],21)
     rmaf2<-runmed(myaflist[which(myaflist>=0.1)],21)
-    
-    
+      
     ## In the cell line, LOH events are not distinguishable from 
     ## the far more numerous germline homozygous loci
     ## we down-sample to avoid the homozygous loci dominating
@@ -70,7 +67,6 @@ CrambledScanCellline<-function(celllinebam,title,window=51,...){
     CrambledPlot(c(rmdepth1[mypoints],rmdepth2),c(rmaf1[mypoints],rmaf2),title,redline=F,...)
   }
 }
-
 
 CrambledPlot<-function(depthvec,afvec,title,xlimmin=0,xlimmax=100,redline=F){
   ##############################
@@ -91,8 +87,7 @@ CrambledPlot<-function(depthvec,afvec,title,xlimmin=0,xlimmax=100,redline=F){
   dev.off()
 }
 
-CrambledScanInfo <- function(x)
-{
+CrambledScanInfo <- function(x){
   ##############################
   ## Checks to see if a locus ##
   ## is heterozygous in the   ##
@@ -115,8 +110,7 @@ CrambledScanInfo <- function(x)
   list(myDepth=myDepth,AF=myAF)
 }
 
-CrambledScanInfoCellline<-function(x)
-{
+CrambledScanInfoCellline<-function(x){
   ##############################
   ## For each locus, returns  ##
   ## the depth and allele     ##
@@ -151,7 +145,7 @@ CrambledGetSNPs137<-function(){
   if(test){
         
     snp137common <- features(FDb.UCSC.snp137common.hg19)
-    usesnps<-which(as.numeric(snp137common@elementMetadata[,1])>0.4)
+    usesnps<-which(as.numeric(snp137common@elementMetadata[,1])==0)
     
     mysnps<-snp137common[usesnps,]
     myseqs<-as.character(snp137common@seqnames[usesnps])
