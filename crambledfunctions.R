@@ -1,8 +1,7 @@
 
 library(Rsamtools)
-library(FDb.UCSC.snp137common.hg19)
 
-# tested with Rsamtools_1.20.5, FDb.UCSC.snp137common.hg19_1.0.0
+# tested with Rsamtools_1.20.5
 
 CrambledScan<-function(normalbam,tumourbam,title,window=51,redline=F,...){
   
@@ -11,7 +10,7 @@ CrambledScan<-function(normalbam,tumourbam,title,window=51,redline=F,...){
   if(test){
     
     ## Get the list of loci to be examined
-    mywhich<-CrambledGetSNPs137()
+    mywhich<-CrambledSuggestSNPsHG19()
     
     ## Use Rsamtools to pull out the depths and allele fractions at those locations
     fls <- PileupFiles(c(normalbam, tumourbam))
@@ -41,7 +40,7 @@ CrambledScanCellline<-function(celllinebam,title,window=51,...){
   if(!test){message("This function requires Rsamtools")}
   if(test){
     ## Get the list of loci to be examined
-    mywhich<-CrambledGetSNPs137()
+    mywhich<-CrambledSuggestSNPsHG19()
     
     ## Use Rsamtools to pull out the depths and allele fractions at those locations
     fls <- PileupFiles(celllinebam)
@@ -129,29 +128,19 @@ CrambledScanInfoCellline<-function(x){
   list(myDepth=myDepth,AF=myAF)
 }
 
-CrambledGetSNPs137<-function(){
+CrambledSuggestSNPsHG19<-function(){
   ###############################
-  ## Returns a GRanges object  ##
-  ## giving the locations of   ##
-  ## the BAM file to examine   ##
+  ## Loads the GRanges object  ##
+  ## supplied with Crambled    ##
+  ## and returns it to the     ##
+  ## main function.            ##
   ###############################
   
-  ## In this case we choose all 
-  ## features with a decent chance
-  ## of being heterozygous in the 
-  ## germline sample
-  test<-require(FDb.UCSC.snp137common.hg19)
-  if(!test){message("This function requires FDb.UCSC.snp137common.hg19")}
-  if(test){
-        
-    snp137common <- features(FDb.UCSC.snp137common.hg19)
-    usesnps<-which(as.numeric(snp137common@elementMetadata[,1])==0)
-    
-    mysnps<-snp137common[usesnps,]
-    myseqs<-as.character(snp137common@seqnames[usesnps])
-    myranges<-(snp137common@ranges[usesnps])
-    
-    mywhich <- GRanges(myseqs, myranges)
-    return(mywhich)
-  }
+  # We separate this into its own function 
+  # to facilitate users defining their own 
+  # lists
+ if(!exists("CrambledGRangesHG19")){
+   load("CrambledGRangesHG19.RData")   
+ }
+ return(CrambledGRangesHG19)  
 }
