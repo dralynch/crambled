@@ -34,7 +34,7 @@ CrambledScan<-function(normalbam,tumourbam,title,window=51,redline=F,...){
   }
 }
 
-CrambledScanCellline<-function(celllinebam,title,window=51,...){
+CrambledScanCellline<-function(celllinebam,title,window=51,AFthreshold=0.1,...){
   
   test<-require(Rsamtools)
   if(!test){message("This function requires Rsamtools")}
@@ -53,10 +53,10 @@ CrambledScanCellline<-function(celllinebam,title,window=51,...){
     myaflist<-res[seq(2,length(res),2)]
     
     ## Need to separate out the heterozygous sites from the others
-    rmdepth1<-runmed(mydepthlist[which(myaflist<0.1)],21)
-    rmdepth2<-runmed(mydepthlist[which(myaflist>=0.1)],21)
-    rmaf1<-runmed(myaflist[which(myaflist<0.1)],21)
-    rmaf2<-runmed(myaflist[which(myaflist>=0.1)],21)
+    rmdepth1<-runmed(mydepthlist[which(myaflist<AFthreshold)],21)
+    rmdepth2<-runmed(mydepthlist[which(myaflist>=AFthreshold)],21)
+    rmaf1<-runmed(myaflist[which(myaflist<AFthreshold)],21)
+    rmaf2<-runmed(myaflist[which(myaflist>=AFthreshold)],21)
       
     ## In the cell line, LOH events are not distinguishable from 
     ## the far more numerous germline homozygous loci
