@@ -67,14 +67,22 @@ CrambledScanCellline<-function(celllinebam,title,window=51,AFthreshold=0.1,...){
   }
 }
 
-CrambledPlot<-function(depthvec,afvec,title,xlimmin=0,xlimmax=100,redline=F){
+CrambledPlot<-function(depthvec,afvec,title,xlimmin=0,xlimmax=100,redline=F,xpower=1){
   ##############################
   ## Produces a plot that can ##
   ## be loaded into the Shiny ##
   ## app                      ##
   ##############################
+  
+  ## Options include 
+  ## 'redline' - include a contour marking a smoothed edge of the 
+  ##            region for which observations have been made.
+  ## 'xpower' - adjusts the function of the data being plotted. A 
+  ##            lower value (e.g. 0.5) gives more prominence to 
+  ##            regions with low support, but also enhances noise.
+  
   png(width=600,height=400,file=paste(title,"-shiny.png",sep="",collapse=""))
-  smoothScatter(depthvec,afvec,transformation = function(x){x},main=title,xlab="Depth",ylab="B allele frequency",ylim=c(0,0.5),xlim=c(xlimmin,xlimmax))
+  smoothScatter(depthvec,afvec,transformation = function(x){x^xpower},main=title,xlab="Depth",ylab="B allele fraction",ylim=c(0,0.5),xlim=c(xlimmin,xlimmax))
   if(redline){
     afclass<-as.numeric(cut(afvec,seq(-0.005,0.505,0.01)))
     xbounds<-rep(NA,51)
